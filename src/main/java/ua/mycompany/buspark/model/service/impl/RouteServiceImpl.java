@@ -13,6 +13,7 @@ import ua.mycompany.buspark.model.entity.RouteEntity;
 import ua.mycompany.buspark.model.repository.RouteRepository;
 import ua.mycompany.buspark.model.service.RouteService;
 import ua.mycompany.buspark.model.service.exception.EntityNotFoundRuntimeException;
+import ua.mycompany.buspark.model.service.exception.IncorrectValueRuntimeException;
 import ua.mycompany.buspark.model.service.exception.InvalidPaginatingRuntimeException;
 import ua.mycompany.buspark.model.service.mapper.BusMapper;
 import ua.mycompany.buspark.model.service.mapper.RouteMapper;
@@ -79,7 +80,7 @@ public class RouteServiceImpl implements RouteService {
     public List<Route> findByStatus(Status status) {
         if (status == null) {
             log.warn("Status of route is null");
-            throw new EntityNotFoundException("Status of route is null");
+            throw new IncorrectValueRuntimeException("Status of route is null");
         }
         List<RouteEntity> result = routeRepository.findByStatus(status);
         return result.isEmpty() ? Collections.emptyList()
@@ -92,7 +93,7 @@ public class RouteServiceImpl implements RouteService {
     public List<Route> findByArrival(String arrival) {
         if (arrival.isEmpty()) {
             log.warn("Arrival of bus is null");
-            throw new EntityNotFoundException("Arrival of bus is null");
+            throw new IncorrectValueRuntimeException("Arrival of bus is null");
         }
         List<RouteEntity> result = routeRepository.findByArrival(arrival);
         return result.isEmpty() ? Collections.emptyList()
@@ -105,7 +106,7 @@ public class RouteServiceImpl implements RouteService {
     public List<Route> findByDeparture(String departure) {
         if (departure.isEmpty()) {
             log.warn("Departure of bus is null");
-            throw new EntityNotFoundException("Departure of bus is null");
+            throw new IncorrectValueRuntimeException("Departure of bus is null");
         }
         List<RouteEntity> result = routeRepository.findByArrival(departure);
         return result.isEmpty() ? Collections.emptyList()

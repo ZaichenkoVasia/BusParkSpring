@@ -12,6 +12,7 @@ import ua.mycompany.buspark.model.entity.UserEntity;
 import ua.mycompany.buspark.model.repository.BusRepository;
 import ua.mycompany.buspark.model.service.BusService;
 import ua.mycompany.buspark.model.service.exception.EntityNotFoundRuntimeException;
+import ua.mycompany.buspark.model.service.exception.IncorrectValueRuntimeException;
 import ua.mycompany.buspark.model.service.exception.InvalidPaginatingRuntimeException;
 import ua.mycompany.buspark.model.service.mapper.BusMapper;
 import ua.mycompany.buspark.model.service.mapper.UserMapper;
@@ -77,7 +78,7 @@ public class BusServiceImpl implements BusService {
     public List<Bus> findByStatus(Status status) {
         if (status == null) {
             log.warn("Status of bus is null");
-            throw new EntityNotFoundException("Status of bus is null");
+            throw new IncorrectValueRuntimeException("Status of bus is null");
         }
         List<BusEntity> result = busRepository.findByStatus(status);
         return result.isEmpty() ? Collections.emptyList()
