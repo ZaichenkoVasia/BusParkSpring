@@ -42,21 +42,21 @@ public class UserServiceImpl implements UserService {
         }
         String encoded = encoder.encode(user.getPassword());
         User userWithEncodedPass = new User(user, encoded);
-        UserEntity entity = userRepository.save(mapper.userToUserEntity(userWithEncodedPass));
+        UserEntity userEntity = userRepository.save(mapper.userToUserEntity(userWithEncodedPass));
 
-        return mapper.userEntityToUser(entity);
+        return mapper.userEntityToUser(userEntity);
     }
 
     @Override
     public User login(String email, String password) {
         String encodedPassword = encoder.encode(password);
-        Optional<UserEntity> entity = userRepository.findByEmail(email);
-        if (!entity.isPresent()) {
+        Optional<UserEntity> userEntity = userRepository.findByEmail(email);
+        if (!userEntity.isPresent()) {
             log.warn("Can not find user");
             throw new EntityNotFoundRuntimeException("Can not find user");
         } else {
-            if (entity.get().getPassword().equals(encodedPassword)) {
-                return mapper.userEntityToUser(entity.get());
+            if (userEntity.get().getPassword().equals(encodedPassword)) {
+                return mapper.userEntityToUser(userEntity.get());
             } else {
                 log.warn("Incorrect password");
                 throw new EntityNotFoundRuntimeException("Incorrect password");
@@ -72,7 +72,6 @@ public class UserServiceImpl implements UserService {
         }
         PageRequest pageRequest = PageRequest.of(currentPage, recordsPerPage);
         Page<UserEntity> result = userRepository.findAll(pageRequest);
-
         return result.isEmpty() ? Collections.emptyList()
                 : result.stream()
                 .map(mapper::userEntityToUser)
