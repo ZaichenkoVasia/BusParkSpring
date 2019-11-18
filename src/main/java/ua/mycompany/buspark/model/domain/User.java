@@ -3,7 +3,6 @@ package ua.mycompany.buspark.model.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ua.mycompany.buspark.model.domain.enums.Role;
 import ua.mycompany.buspark.model.domain.enums.Status;
 

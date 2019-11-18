@@ -38,13 +38,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            log.warn("User is already registered by this e-mail");
-            throw new EntityNotFoundRuntimeException("User is already registered by this e-mail");
+            log.warn("User is registered");
+            throw new EntityNotFoundRuntimeException("User is registered");
         }
-
         String encoded = encoder.encode(user.getPassword());
         User userWithEncodedPass = new User(user, encoded);
-
         UserEntity entity = userRepository.save(mapper.userToUserEntity(userWithEncodedPass));
 
         return mapper.userEntityToUser(entity);
@@ -54,10 +52,9 @@ public class UserServiceImpl implements UserService {
     public User login(String email, String password) {
         String encodedPassword = encoder.encode(password);
         Optional<UserEntity> entity = userRepository.findByEmail(email);
-
         if (!entity.isPresent()) {
-            log.warn("There is no user with this e-mail");
-            throw new EntityNotFoundException("There is no user with this e-mail");
+            log.warn("Can not find user");
+            throw new EntityNotFoundException("Can not find user");
         } else {
             if (entity.get().getPassword().equals(encodedPassword)) {
                 return mapper.userEntityToUser(entity.get());
@@ -71,10 +68,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll(Integer currentPage, Integer recordsPerPage) {
         if (currentPage <= 0 || recordsPerPage <= 0) {
-            log.error("Invalid number of current page or records per page");
-            throw new InvalidPaginatingException("Invalid number of current page or records per page");
+            log.error("Invalid pagination counters");
+            throw new InvalidPaginatingException("Invalid pagination counters");
         }
-
         PageRequest pageRequest = PageRequest.of(currentPage, recordsPerPage);
         Page<UserEntity> result = userRepository.findAll(pageRequest);
 

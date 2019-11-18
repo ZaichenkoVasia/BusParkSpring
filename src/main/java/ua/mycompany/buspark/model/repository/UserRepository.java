@@ -1,11 +1,11 @@
 package ua.mycompany.buspark.model.repository;
 
-import ua.mycompany.buspark.model.domain.enums.Status;
-import ua.mycompany.buspark.model.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import ua.mycompany.buspark.model.domain.enums.Status;
+import ua.mycompany.buspark.model.entity.UserEntity;
 
 import java.util.Optional;
 

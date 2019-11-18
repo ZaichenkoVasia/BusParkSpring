@@ -1,6 +1,6 @@
 package ua.mycompany.buspark.model.service.exception;
 
-public class EntityNotFoundRuntimeException extends  RuntimeException{
+public class EntityNotFoundRuntimeException extends RuntimeException {
     public EntityNotFoundRuntimeException() {
     }
 

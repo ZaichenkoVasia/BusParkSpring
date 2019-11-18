@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import ua.mycompany.buspark.model.domain.enums.Status;
 
-import javax.persistence.*;
 import javax.validation.constraints.*;
 
 @Data
