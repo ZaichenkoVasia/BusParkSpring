@@ -8,7 +8,7 @@ import ua.mycompany.buspark.model.entity.RouteEntity;
 @Mapper
 @Component
 public interface RouteMapper {
-    Route routeToRouteEntity(RouteEntity routeEntity);
+    RouteEntity routeToRouteEntity(Route route);
 
-    RouteEntity routeEntityToRoute(Route route);
+    Route routeEntityToRoute(RouteEntity routeEntity);
 }

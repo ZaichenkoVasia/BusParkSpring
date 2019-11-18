@@ -11,10 +11,9 @@ import ua.mycompany.buspark.model.entity.UserEntity;
 import ua.mycompany.buspark.model.repository.UserRepository;
 import ua.mycompany.buspark.model.service.UserService;
 import ua.mycompany.buspark.model.service.exception.EntityNotFoundRuntimeException;
-import ua.mycompany.buspark.model.service.exception.InvalidPaginatingException;
+import ua.mycompany.buspark.model.service.exception.InvalidPaginatingRuntimeException;
 import ua.mycompany.buspark.model.service.mapper.UserMapper;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -54,13 +53,13 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> entity = userRepository.findByEmail(email);
         if (!entity.isPresent()) {
             log.warn("Can not find user");
-            throw new EntityNotFoundException("Can not find user");
+            throw new EntityNotFoundRuntimeException("Can not find user");
         } else {
             if (entity.get().getPassword().equals(encodedPassword)) {
                 return mapper.userEntityToUser(entity.get());
             } else {
                 log.warn("Incorrect password");
-                throw new EntityNotFoundException("Incorrect password");
+                throw new EntityNotFoundRuntimeException("Incorrect password");
             }
         }
     }
@@ -69,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public List<User> findAll(Integer currentPage, Integer recordsPerPage) {
         if (currentPage <= 0 || recordsPerPage <= 0) {
             log.error("Invalid pagination counters");
-            throw new InvalidPaginatingException("Invalid pagination counters");
+            throw new InvalidPaginatingRuntimeException("Invalid pagination counters");
         }
         PageRequest pageRequest = PageRequest.of(currentPage, recordsPerPage);
         Page<UserEntity> result = userRepository.findAll(pageRequest);
