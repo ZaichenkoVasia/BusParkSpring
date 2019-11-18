@@ -61,7 +61,7 @@ public class BusServiceImpl implements BusService {
     public Bus findByUser(User user) {
         if (user == null) {
             log.warn("User is not exist");
-            throw new EntityNotFoundException("User is not exist");
+            throw new IncorrectValueRuntimeException("User is not exist");
         }
         UserEntity userEntity = userMapper.userToUserEntity(user);
         Optional<BusEntity> busEntity = busRepository.findByUser(userEntity);

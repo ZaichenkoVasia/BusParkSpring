@@ -21,6 +21,7 @@ import ua.mycompany.buspark.model.service.mapper.RouteMapper;
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,7 @@ public class RouteServiceImpl implements RouteService {
     public Route findByBus(Bus bus) {
         if (bus == null) {
             log.warn("Bus is not exist");
-            throw new EntityNotFoundException("Bus is not exist");
+            throw new IncorrectValueRuntimeException("Bus is not exist");
         }
         BusEntity busEntity = busMapper.busToBusEntity(bus);
         Optional<RouteEntity> routeEntity = routeRepository.findByBus(busEntity);
@@ -91,7 +92,7 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public List<Route> findByArrival(String arrival) {
-        if (arrival.isEmpty()) {
+        if (Objects.isNull(arrival)) {
             log.warn("Arrival of bus is null");
             throw new IncorrectValueRuntimeException("Arrival of bus is null");
         }
@@ -104,7 +105,7 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public List<Route> findByDeparture(String departure) {
-        if (departure.isEmpty()) {
+        if (Objects.isNull(departure)) {
             log.warn("Departure of bus is null");
             throw new IncorrectValueRuntimeException("Departure of bus is null");
         }
