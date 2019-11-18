@@ -90,7 +90,7 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public List<Route> findByArrival(String arrival) {
-        if (arrival == null) {
+        if (arrival.isEmpty()) {
             log.warn("Arrival of bus is null");
             throw new EntityNotFoundException("Arrival of bus is null");
         }
@@ -103,7 +103,7 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public List<Route> findByDeparture(String departure) {
-        if (departure == null) {
+        if (departure.isEmpty()) {
             log.warn("Departure of bus is null");
             throw new EntityNotFoundException("Departure of bus is null");
         }
