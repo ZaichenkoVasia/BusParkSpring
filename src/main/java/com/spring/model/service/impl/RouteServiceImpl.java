@@ -5,9 +5,9 @@ import com.spring.model.domain.Bus;
 import com.spring.model.domain.Route;
 import com.spring.model.entity.AssignmentEntity;
 import com.spring.model.entity.RouteEntity;
-import com.spring.model.exception.CheckNotExistRuntimeException;
+import com.spring.model.exception.RouteNotExistRuntimeException;
 import com.spring.model.exception.EntityNotFoundRuntimeException;
-import com.spring.model.exception.OrderNotExistRuntimeException;
+import com.spring.model.exception.AssignmentsNotExistRuntimeException;
 import com.spring.model.repositories.AssignmentRepository;
 import com.spring.model.repositories.RouteRepository;
 import com.spring.model.service.BusService;
@@ -94,7 +94,7 @@ public class RouteServiceImpl implements RouteService {
             routeRepository.save(routeMapper.checkToCheckEntity(route));
         } else {
             log.info("Assignments not exist");
-            throw new OrderNotExistRuntimeException("Assignments not exist");
+            throw new AssignmentsNotExistRuntimeException("Assignments not exist");
         }
     }
 
@@ -105,7 +105,7 @@ public class RouteServiceImpl implements RouteService {
             routeRepository.save(routeMapper.checkToCheckEntity(route));
         } else {
             log.info("Route not exist");
-            throw new CheckNotExistRuntimeException("Route not exist");
+            throw new RouteNotExistRuntimeException("Route not exist");
         }
     }
 }
