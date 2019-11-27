@@ -28,14 +28,13 @@ public class LocaleConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    //bean-объект-перехватчик, который будет переключаться на новую локаль на основе значения параметра lang, добавляемого к запросу:
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
         lci.setParamName("lang");
         return lci;
     }
 
-    @Bean  //Spring Boot будет искать файлы сообщений, содержащие ключи и значения интернационализации в src / main / resources
+    @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:/i18n/contentBundle");

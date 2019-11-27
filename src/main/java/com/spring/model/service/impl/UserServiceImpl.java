@@ -33,9 +33,15 @@ public class UserServiceImpl implements UserService {
     private final UserTypeMapper userTypeMapper;
 
     @Override
-    public User findByLogin(String login) {
-        return userMapper.userEntityToUser(userRepository.findByLogin(login).
+    public User findByLoginAndPassword(String login, String password) {
+        User user = userMapper.userEntityToUser(userRepository.findByLogin(login).
                 orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find user by this login")));
+
+        if(user.getPassword().equals(DigestUtils.sha256Hex(password))){
+            return user;
+        }
+        log.error("Password is uncorrected");
+        return null;
     }
 
     @Override

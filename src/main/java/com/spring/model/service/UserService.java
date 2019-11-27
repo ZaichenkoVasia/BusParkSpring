@@ -6,7 +6,7 @@ import com.spring.model.domain.UserType;
 import java.util.List;
 
 public interface UserService {
-    User findByLogin(String login);
+    User findByLoginAndPassword(String login, String password);
 
     List<User> findByUserType(UserType userType);
 

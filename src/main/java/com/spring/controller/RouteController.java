@@ -54,7 +54,7 @@ public class RouteController {
     }
 
     @PostMapping(value = "/route", params = "btnCreateRoute")
-    public String createCheck(HttpSession session, HttpServletRequest request) {
+    public String createRoute(HttpSession session, HttpServletRequest request) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
         if (assignments != null && assignments.size() > 0) {
@@ -72,7 +72,7 @@ public class RouteController {
     }
 
     @PostMapping(value = "/route", params = "btnCancelRoute")
-    public String clearCheck(HttpSession session) {
+    public String clearRoute(HttpSession session) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
         if (assignments != null) {
@@ -82,7 +82,7 @@ public class RouteController {
     }
 
     @GetMapping("/route/del/{count}")
-    public ModelAndView editGoods(HttpSession session, @PathVariable Integer count) {
+    public ModelAndView editAssignments(HttpSession session, @PathVariable Integer count) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
         if (assignments.size() >= count && count > 0) {

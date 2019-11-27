@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RouteServiceImpl implements RouteService {
 
+    private final BusService busService;
     private final RouteRepository routeRepository;
     private final AssignmentRepository assignmentRepository;
-    private final BusService busService;
     private final RouteMapper routeMapper;
     private final AssignmentMapper assignmentMapper;
 
