@@ -1,12 +1,10 @@
 package com.spring.controller;
 
+import com.spring.model.domain.User;
+import com.spring.model.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +12,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.spring.model.domain.User;
-import com.spring.model.service.impl.UserServiceImpl;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RegistrationController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @GetMapping("/registration")
     public String registrationView(Model model) {
@@ -32,12 +29,12 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public ModelAndView registration(HttpSession session, Model model, @ModelAttribute User user) {
-        UserDetails newUser = userService.registration(user);
+        User newUser = userService.registration(user);
         if (newUser != null) {
-            ((User) newUser).setPassword(null);
+            newUser.setPassword(null);
             session.setAttribute("user", newUser);
-            log.info("Регистрация нового пользователя " + ((User) newUser).getName());
-            return new ModelAndView("redirect:/check");
+            log.info("Регистрация нового пользователя " + newUser.getName());
+            return new ModelAndView("redirect:/registration");
         } else {
             log.info("Регистрация не удалась. Пользователь с таким email уже существует");
             model.addAttribute("existsLogin", user.getLogin());

@@ -21,7 +21,7 @@ import java.util.List;
 @Controller
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class CheckController {
+public class RouteController {
 
     private final RouteService routeService;
 

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,10 +42,17 @@ public class UserController {
                                    @RequestParam("password") String password,
                                    HttpSession session,
                                    Model model) {
-        UserDetails user = userService.loadUserByUsername(email);
+        User user = userService.findByLogin(email);
         if (user != null && user.getPassword().equals(DigestUtils.sha256Hex(password))) {
             session.setAttribute("user", user);
             session.setAttribute("userNotExists", null);
+            log.info("Login " + user.getName());
+            String userType = user.getUserType().getType();
+            if (userType.equalsIgnoreCase("admin")) {
+                return new ModelAndView("redirect:/bus");
+            } else if (userType.equalsIgnoreCase("driver")) {
+                return new ModelAndView("redirect:/route");
+            }
         } else {
             session.setAttribute("user", null);
             session.setAttribute("userNotExists", true);

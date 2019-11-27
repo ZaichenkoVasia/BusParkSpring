@@ -15,15 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,21 +92,12 @@ public class UserServiceImpl implements UserService {
             UserType type = userTypeMapper.userTypeEntityToUserType(userTypeRepository.findByType("cashier")
                     .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find user type by this type")));
 
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
             user.setUserType(type);
             return userMapper.userEntityToUser(userRepository.save(userMapper.userToUserEntity(user)));
         } else {
             log.info("Don't find user by this login");
             throw new EntityNotFoundRuntimeException("Don't find user by this login");
         }
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        log.info("ClientServiceImpl:loadUserByUsername");
-        Optional<UserEntity> byLogin = userRepository
-                .findByLogin(login);
-        return byLogin.map(userMapper::userEntityToUser).orElse(null);
     }
 }
