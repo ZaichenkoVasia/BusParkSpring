@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,16 +28,15 @@ public class RouteController {
 
     @PostMapping(value = "/route", params = "btnAddAssignment")
     public String addAssignment(HttpSession session,
-                                @RequestParam("code") Integer code,
-                                @RequestParam("tax") Double tax, @RequestParam("journey") Integer journey) {
+                                @ModelAttribute Assignment assignment) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
         if (assignments == null) {
             assignments = new ArrayList<>();
             session.setAttribute("addAssignment", assignments);
         }
-        Assignment assignment = routeService.addAssignment(code, tax, journey);
-        assignments.add(assignment);
+        Assignment assignmentResult = routeService.addAssignment(assignment);
+        assignments.add(assignmentResult);
         return "/route";
     }
 

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -36,5 +36,5 @@ public class Bus {
 
     private String comments;
 
-    private Collection<Assignment> assignmentCollection;
+    private List<Assignment> assignments;
 }

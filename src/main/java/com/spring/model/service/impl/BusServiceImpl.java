@@ -51,24 +51,16 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public void addBus(Integer code, String model, Double mileage, Double consumption, String status, String comments) {
-//        if(Objects.isNull(bus)){
-//            log.warn("Invalid input bus data");
-//            throw new InvalidDataRuntimeException("Invalid input bus data");
-//        }
-        Optional<BusEntity> busEntity = busRepository.findByCode(code);
+    public void addBus(Bus bus) {
+        if(Objects.isNull(bus)){
+            log.warn("Invalid input bus data");
+            throw new InvalidDataRuntimeException("Invalid input bus data");
+        }
+        Optional<BusEntity> busEntity = busRepository.findByCode(bus.getCode());
         if (busEntity.isPresent()) {
             log.warn("Bus with this code is exist");
             throw new InvalidDataRuntimeException("Bus with this code is exist");
         }
-
-        Bus bus = new Bus();
-        bus.setCode(code);
-        bus.setModel(model);
-        bus.setMileage(mileage);
-        bus.setConsumption(consumption);
-        bus.setStatus(status);
-        bus.setComments(comments);
         BusEntity entityBus = busMapper.busToBusEntity(bus);
         busRepository.save(entityBus);
     }

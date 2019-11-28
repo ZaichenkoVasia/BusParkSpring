@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -20,5 +20,5 @@ public class UserType {
 
     private String description;
 
-    private Collection<User> userCollection;
+    private List<User> users;
 }

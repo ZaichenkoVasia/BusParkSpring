@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -45,5 +45,5 @@ public class BusEntity {
     private String comments;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bus")
-    private Collection<AssignmentEntity> assignments;
+    private List<AssignmentEntity> assignments;
 }

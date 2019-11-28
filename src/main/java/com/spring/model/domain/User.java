@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
-import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,7 +26,7 @@ public class User {
 
     private String name;
 
-    private Collection<Route> routeCollection;
+    private List<Route> routes;
 
     private UserType userType;
 }

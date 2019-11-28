@@ -9,7 +9,7 @@ public interface BusService {
 
     Page<Bus> showPageList(int currentPage, int pageSize);
 
-    void addBus(Integer code, String model, Double mileage, Double consumption, String status, String comments);
+    void addBus(Bus bus);
 
     void changeBus(Integer code, Double newMileage, Double newConsumption);
 }

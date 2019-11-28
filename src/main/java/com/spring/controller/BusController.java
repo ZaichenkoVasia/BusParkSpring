@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -31,12 +28,10 @@ public class BusController {
     }
 
     @PostMapping("/bus")
-    public String addBus(Model model, @RequestParam("code") Integer code, @RequestParam("model") String name,
-                         @RequestParam("mileage") Double mileage, @RequestParam("consumption") Double consumption, @RequestParam("status") String status,
-                         @RequestParam("comments") String comments,
+    public String addBus(Model model, @ModelAttribute Bus bus,
                          @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
-        busService.addBus(code, name, mileage, consumption, status, comments);
-        model.addAttribute("addedBus", name);
+        busService.addBus(bus);
+        model.addAttribute("addedBus", bus.getModel());
         addPagination(model, page, size);
         return "/bus";
     }

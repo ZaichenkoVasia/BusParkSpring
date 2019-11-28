@@ -39,19 +39,14 @@ public class RouteServiceImpl implements RouteService {
     private final AssignmentMapper assignmentMapper;
 
     @Override
-    public Assignment addAssignment(Integer code, Double tax, Integer journey) {
-        if (Objects.isNull(code) || Objects.isNull(tax) || Objects.isNull(journey)
-                || tax < 0 || journey < 0) {
+    public Assignment addAssignment(Assignment assignment) {
+        if (Objects.isNull(assignment)) {
             log.warn("Incorrect assignment data");
             throw new InvalidDataRuntimeException("Incorrect assignment data");
         }
-        Bus existsBus = busService.findByCode(code);
-        Assignment assignment = new Assignment();
+        Bus existsBus = busService.findByCode(assignment.getBus().getCode());
         assignment.setBus(existsBus);
-        assignment.setTax(tax);
-        assignment.setJourney(journey);
         assignment.setCanceled(NOT_CANCELED);
-
         return assignment;
     }
 

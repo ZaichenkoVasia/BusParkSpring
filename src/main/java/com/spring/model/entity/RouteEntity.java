@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -33,5 +33,5 @@ public class RouteEntity {
     private Integer status;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
-    private Collection<AssignmentEntity> assignments;
+    private List<AssignmentEntity> assignments;
 }

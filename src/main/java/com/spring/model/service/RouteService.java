@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RouteService {
 
-    Assignment addAssignment(Integer code, Double tax, Integer journey);
+    Assignment addAssignment(Assignment assignment);
 
     void addRoute(List<Assignment> assignments);
 
