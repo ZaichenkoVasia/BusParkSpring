@@ -6,7 +6,8 @@ import com.spring.model.domain.Route;
 import java.util.List;
 
 public interface RouteService {
-    Assignment addAssignment(Integer code, String name, Double tax, Integer journey);
+
+    Assignment addAssignment(Integer code, Double tax, Integer journey);
 
     void addRoute(List<Assignment> assignments);
 

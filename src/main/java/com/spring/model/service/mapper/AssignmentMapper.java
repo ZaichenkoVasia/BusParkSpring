@@ -15,6 +15,7 @@ import java.util.Objects;
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AssignmentMapper {
+
     private RouteMapper routeMapper;
     private BusMapper busMapper;
 
@@ -23,7 +24,7 @@ public class AssignmentMapper {
             return null;
         }
 
-        Route route = routeMapper.checkEntityToCheck(assignmentEntity.getRoute());
+        Route route = routeMapper.routeEntityToRoute(assignmentEntity.getRoute());
         Bus bus = busMapper.busEntityToBus(assignmentEntity.getBus());
 
         return Assignment.builder()
@@ -41,7 +42,7 @@ public class AssignmentMapper {
             return null;
         }
 
-        RouteEntity check = routeMapper.checkToCheckEntity(assignment.getRoute());
+        RouteEntity route = routeMapper.routeToRouteEntity(assignment.getRoute());
         BusEntity busEntity = busMapper.busToBusEntity(assignment.getBus());
 
         return AssignmentEntity.builder()
@@ -49,7 +50,7 @@ public class AssignmentMapper {
                 .tax(assignment.getTax())
                 .journey(assignment.getJourney())
                 .canceled(assignment.getCanceled())
-                .route(check)
+                .route(route)
                 .bus(busEntity)
                 .build();
     }

@@ -12,8 +12,8 @@ import java.util.Objects;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-
 public class UserMapper {
+
     private UserTypeMapper userTypeMapper;
 
     public User userEntityToUser(UserEntity userEntity) {
@@ -25,7 +25,7 @@ public class UserMapper {
 
         return User.builder()
                 .id(userEntity.getId())
-                .login(userEntity.getLogin())
+                .email(userEntity.getEmail())
                 .password(userEntity.getPassword())
                 .name(userEntity.getName())
                 .userType(userType)
@@ -41,7 +41,7 @@ public class UserMapper {
 
         return UserEntity.builder()
                 .id(user.getId())
-                .login(user.getLogin())
+                .email(user.getEmail())
                 .password(user.getPassword())
                 .name(user.getName())
                 .userType(userType)

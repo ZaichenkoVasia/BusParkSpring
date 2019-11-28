@@ -10,29 +10,27 @@ import java.util.Objects;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-
 public class UserTypeMapper {
-    public UserType userTypeEntityToUserType(UserTypeEntity userTypeEntity) {
-        if (Objects.isNull(userTypeEntity)) {
-            return null;
-        }
 
-        return UserType.builder()
-                .id(userTypeEntity.getId())
-                .type(userTypeEntity.getType())
-                .description(userTypeEntity.getDescription())
-                .build();
+    public UserType userTypeEntityToUserType(UserTypeEntity userTypeEntity) {
+
+        return Objects.isNull(userTypeEntity) ?
+                null :
+                UserType.builder()
+                        .id(userTypeEntity.getId())
+                        .type(userTypeEntity.getType())
+                        .description(userTypeEntity.getDescription())
+                        .build();
     }
 
     public UserTypeEntity userTypeToUserTypeEntity(UserType userType) {
-        if (Objects.isNull(userType)) {
-            return null;
-        }
 
-        return UserTypeEntity.builder()
-                .id(userType.getId())
-                .type(userType.getType())
-                .description(userType.getDescription())
-                .build();
+        return Objects.isNull(userType) ?
+                null :
+                UserTypeEntity.builder()
+                        .id(userType.getId())
+                        .type(userType.getType())
+                        .description(userType.getDescription())
+                        .build();
     }
 }

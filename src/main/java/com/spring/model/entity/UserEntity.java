@@ -22,8 +22,8 @@ public class UserEntity {
     private Long id;
 
     @Basic(optional = false)
-    @Column(name = "login")
-    private String login;
+    @Column(name = "email")
+    private String email;
 
     @Basic(optional = false)
     @Column(name = "password")

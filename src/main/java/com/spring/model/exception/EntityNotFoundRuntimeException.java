@@ -1,6 +1,7 @@
 package com.spring.model.exception;
 
 public class EntityNotFoundRuntimeException extends RuntimeException {
+
     public EntityNotFoundRuntimeException() {
     }
 

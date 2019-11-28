@@ -25,8 +25,7 @@ public class BusController {
     private final BusService busService;
 
     @GetMapping("/bus")
-    public String viewBuses(Model model, @RequestParam("page") Optional<Integer> page,
-                            @RequestParam("size") Optional<Integer> size) {
+    public String viewBuses(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
         addPagination(model, page, size);
         return "/bus";
     }
@@ -36,16 +35,8 @@ public class BusController {
                          @RequestParam("mileage") Double mileage, @RequestParam("consumption") Double consumption, @RequestParam("status") String status,
                          @RequestParam("comments") String comments,
                          @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
-        Long busId = busService.addBus(code, name, mileage, consumption, status, comments);
-        if (busId > 0) {
-            model.addAttribute("addedBus", name);
-        } else if (busId == -1) {
-            model.addAttribute("addedBus", null);
-            model.addAttribute("existsCode", code);
-        } else if (busId == -2) {
-            model.addAttribute("addedBus", null);
-            model.addAttribute("existsModel", name);
-        }
+        busService.addBus(code, name, mileage, consumption, status, comments);
+        model.addAttribute("addedBus", name);
         addPagination(model, page, size);
         return "/bus";
     }
@@ -70,7 +61,7 @@ public class BusController {
     private void addPagination(Model model, Optional<Integer> page, Optional<Integer> size) {
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(10);
-        Page<Bus> buses = busService.showPagenationList(currentPage, pageSize);
+        Page<Bus> buses = busService.showPageList(currentPage, pageSize);
         model.addAttribute("bus", buses);
         model.addAttribute("currentPage", currentPage);
         int totalPages = buses.getTotalPages();

@@ -33,12 +33,9 @@ public class RegistrationController {
         if (newUser != null) {
             newUser.setPassword(null);
             session.setAttribute("user", newUser);
-            log.info("Регистрация нового пользователя " + newUser.getName());
             return new ModelAndView("redirect:/registration");
-        } else {
-            log.info("Регистрация не удалась. Пользователь с таким email уже существует");
-            model.addAttribute("existsLogin", user.getLogin());
-            return new ModelAndView("/registration");
         }
+        model.addAttribute("existsEmail", user.getEmail());
+        return new ModelAndView("/registration");
     }
 }

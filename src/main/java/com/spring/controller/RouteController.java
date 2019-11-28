@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,8 +30,8 @@ public class RouteController {
     }
 
     @PostMapping(value = "/route", params = "btnAddAssignment")
-    public String addAssignment(Model model, HttpSession session,
-                                @RequestParam("code") Integer code, @RequestParam("name") String name,
+    public String addAssignment(HttpSession session,
+                                @RequestParam("code") Integer code,
                                 @RequestParam("tax") Double tax, @RequestParam("journey") Integer journey) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
@@ -40,16 +39,8 @@ public class RouteController {
             assignments = new ArrayList<>();
             session.setAttribute("addAssignment", assignments);
         }
-        Assignment assignment = routeService.addAssignment(code, name, tax, journey);
-        if (assignment != null) {
-            assignments.add(assignment);
-        } else {
-            if (code != null) {
-                model.addAttribute("busCodeNotFound", code);
-            } else {
-                model.addAttribute("busNameNotFound", name);
-            }
-        }
+        Assignment assignment = routeService.addAssignment(code, tax, journey);
+        assignments.add(assignment);
         return "/route";
     }
 
@@ -57,16 +48,9 @@ public class RouteController {
     public String createRoute(HttpSession session, HttpServletRequest request) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
-        if (assignments != null && assignments.size() > 0) {
-            try {
-                routeService.addRoute(assignments);
-                request.setAttribute("addedRoute", true);
-                assignments.clear();
-            } catch (Exception e) {
-                request.setAttribute("addedRoute", false);
-                assignments.clear();
-                log.error("Route can not created", e);
-            }
+        if (!assignments.isEmpty()) {
+            routeService.addRoute(assignments);
+            request.setAttribute("addedRoute", true);
         }
         return "/route";
     }
@@ -75,7 +59,7 @@ public class RouteController {
     public String clearRoute(HttpSession session) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
-        if (assignments != null) {
+        if (!assignments.isEmpty()) {
             assignments.clear();
         }
         return "/route";
@@ -85,7 +69,7 @@ public class RouteController {
     public ModelAndView editAssignments(HttpSession session, @PathVariable Integer count) {
         @SuppressWarnings("unchecked")
         List<Assignment> assignments = (List<Assignment>) session.getAttribute("addAssignment");
-        if (assignments.size() >= count && count > 0) {
+        if (!assignments.isEmpty()) {
             assignments.remove(count - 1);
         }
         return new ModelAndView("redirect:/route");

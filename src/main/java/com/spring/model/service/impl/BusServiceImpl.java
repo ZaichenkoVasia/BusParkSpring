@@ -3,6 +3,7 @@ package com.spring.model.service.impl;
 import com.spring.model.domain.Bus;
 import com.spring.model.entity.BusEntity;
 import com.spring.model.exception.EntityNotFoundRuntimeException;
+import com.spring.model.exception.InvalidDataRuntimeException;
 import com.spring.model.repositories.BusRepository;
 import com.spring.model.service.BusService;
 import com.spring.model.service.mapper.BusMapper;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,13 +36,7 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public Bus findByModel(String model) {
-        return busMapper.busEntityToBus(busRepository.findByModel(model)
-                .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find bus by this model")));
-    }
-
-    @Override
-    public Page<Bus> showPagenationList(int currentPage, int pageSize) {
+    public Page<Bus> showPageList(int currentPage, int pageSize) {
         PageRequest sortedByCode = PageRequest.of(currentPage - 1, pageSize, Sort.by("code"));
         Page<BusEntity> allBusesEntity = busRepository.findAll(sortedByCode);
         List<Bus> result = allBusesEntity
@@ -55,7 +51,17 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public Long addBus(Integer code, String model, Double mileage, Double consumption, String status, String comments) {
+    public void addBus(Integer code, String model, Double mileage, Double consumption, String status, String comments) {
+//        if(Objects.isNull(bus)){
+//            log.warn("Invalid input bus data");
+//            throw new InvalidDataRuntimeException("Invalid input bus data");
+//        }
+        Optional<BusEntity> busEntity = busRepository.findByCode(code);
+        if (busEntity.isPresent()) {
+            log.warn("Bus with this code is exist");
+            throw new InvalidDataRuntimeException("Bus with this code is exist");
+        }
+
         Bus bus = new Bus();
         bus.setCode(code);
         bus.setModel(model);
@@ -63,34 +69,21 @@ public class BusServiceImpl implements BusService {
         bus.setConsumption(consumption);
         bus.setStatus(status);
         bus.setComments(comments);
-        Optional<BusEntity> busEntity = busRepository.findByCode(code);
-        if (busEntity.isPresent()) {
-            log.info("Bus " + code + " is exist");
-            return -1L;
-        } else {
-            busEntity = busRepository.findByModel(model);
-            if (busEntity.isPresent()) {
-                log.info("Bus " + model + " is exist");
-                return -2L;
-            } else {
-                log.info("Bus is alredy exist");
-                BusEntity result = busRepository.save(busMapper.busToBusEntity(bus));
-                return result.getId();
-            }
-        }
+        BusEntity entityBus = busMapper.busToBusEntity(bus);
+        busRepository.save(entityBus);
     }
 
     @Override
     public void changeBus(Integer code, Double newMileage, Double newConsumption) {
         Bus bus = busMapper.busEntityToBus(busRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find bus by this code")));
-
-        if (newMileage != null) {
-            bus.setMileage(newMileage);
+        if (Objects.isNull(newMileage) || Objects.isNull(newConsumption)) {
+            log.warn("Invalid input bus data");
+            throw new InvalidDataRuntimeException("Invalid input bus data");
         }
-        if (newConsumption != null) {
-            bus.setConsumption(newConsumption);
-        }
-        busRepository.save(busMapper.busToBusEntity(bus));
+        bus.setMileage(newMileage);
+        bus.setConsumption(newConsumption);
+        BusEntity busEntity = busMapper.busToBusEntity(bus);
+        busRepository.save(busEntity);
     }
 }

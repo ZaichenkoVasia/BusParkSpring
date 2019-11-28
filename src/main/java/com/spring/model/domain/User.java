@@ -19,7 +19,7 @@ public class User {
     private Long id;
 
     @Email
-    private String login;
+    private String email;
 
     @Pattern(regexp = "(?=.*\\\\d)(?=.*[a-z])(?=.*[A-Z]).{4,}")
     private String password;

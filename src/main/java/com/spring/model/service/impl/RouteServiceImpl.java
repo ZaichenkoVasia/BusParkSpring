@@ -5,9 +5,10 @@ import com.spring.model.domain.Bus;
 import com.spring.model.domain.Route;
 import com.spring.model.entity.AssignmentEntity;
 import com.spring.model.entity.RouteEntity;
-import com.spring.model.exception.RouteNotExistRuntimeException;
-import com.spring.model.exception.EntityNotFoundRuntimeException;
 import com.spring.model.exception.AssignmentsNotExistRuntimeException;
+import com.spring.model.exception.EntityNotFoundRuntimeException;
+import com.spring.model.exception.InvalidDataRuntimeException;
+import com.spring.model.exception.RouteNotExistRuntimeException;
 import com.spring.model.repositories.AssignmentRepository;
 import com.spring.model.repositories.RouteRepository;
 import com.spring.model.service.BusService;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RouteServiceImpl implements RouteService {
 
+    private static final int CANCELED = 1;
+    private static final int NOT_CANCELED = 0;
     private final BusService busService;
     private final RouteRepository routeRepository;
     private final AssignmentRepository assignmentRepository;
@@ -35,18 +39,18 @@ public class RouteServiceImpl implements RouteService {
     private final AssignmentMapper assignmentMapper;
 
     @Override
-    public Assignment addAssignment(Integer code, String name, Double tax, Integer journey) {
-        Bus existsBus;
-        if (code != null) {
-            existsBus = busService.findByCode(code);
-        } else {
-            existsBus = busService.findByModel(name);
+    public Assignment addAssignment(Integer code, Double tax, Integer journey) {
+        if (Objects.isNull(code) || Objects.isNull(tax) || Objects.isNull(journey)
+                || tax < 0 || journey < 0) {
+            log.warn("Incorrect assignment data");
+            throw new InvalidDataRuntimeException("Incorrect assignment data");
         }
+        Bus existsBus = busService.findByCode(code);
         Assignment assignment = new Assignment();
         assignment.setBus(existsBus);
         assignment.setTax(tax);
-        assignment.setJourney(journey != null ? journey : 0);
-        assignment.setCanceled(0);
+        assignment.setJourney(journey);
+        assignment.setCanceled(NOT_CANCELED);
 
         return assignment;
     }
@@ -54,57 +58,60 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public void addRoute(List<Assignment> assignments) {
         Route route = new Route();
-        route.setStatus(0);
-        route = routeMapper.checkEntityToCheck(routeRepository.save(routeMapper.checkToCheckEntity(route)));
+        route.setStatus(NOT_CANCELED);
+        route = routeMapper.routeEntityToRoute(routeRepository.save(routeMapper.routeToRouteEntity(route)));
 
         for (Assignment assignment : assignments) {
             assignment.setRoute(route);
-            assignmentRepository.save(assignmentMapper.assignmentToAssignmentEntity(assignment));
+            AssignmentEntity assignmentEntity = assignmentMapper.assignmentToAssignmentEntity(assignment);
+            assignmentRepository.save(assignmentEntity);
         }
     }
 
     @Override
     public Route findById(Long routeId) {
-        return routeMapper.checkEntityToCheck(routeRepository.findById(routeId)
+        return routeMapper.routeEntityToRoute(routeRepository.findById(routeId)
                 .orElse(null));
     }
 
     @Override
     public List<Assignment> findAssignmentsByRoute(Long routeId) {
-        Route route = routeMapper.checkEntityToCheck(routeRepository.findById(routeId)
+        Route route = routeMapper.routeEntityToRoute(routeRepository.findById(routeId)
                 .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find route by this id")));
 
-        RouteEntity routeEntity = routeMapper.checkToCheckEntity(route);
+        RouteEntity routeEntity = routeMapper.routeToRouteEntity(route);
         List<AssignmentEntity> assignmentsEntities = assignmentRepository.findAllByRoute(routeEntity);
 
-        return assignmentsEntities.isEmpty() ? Collections.emptyList()
-                : assignmentsEntities.stream()
-                .map(assignmentMapper::assignmentEntityToAssignment)
-                .collect(Collectors.toList());
+        return assignmentsEntities.isEmpty() ?
+                Collections.emptyList() :
+                assignmentsEntities.stream()
+                        .map(assignmentMapper::assignmentEntityToAssignment)
+                        .collect(Collectors.toList());
     }
 
     @Override
     public void cancelRouteAssignments(List<Assignment> assignments, Integer count) {
-        if (assignments != null && assignments.size() >= count && count > 0) {
-            Assignment assignment = assignments.get(count - 1);
-            assignment.setCanceled(1);
-            assignmentRepository.save(assignmentMapper.assignmentToAssignmentEntity(assignment));
-            Route route = assignment.getRoute();
-            routeRepository.save(routeMapper.checkToCheckEntity(route));
-        } else {
+        if (assignments.isEmpty() || Objects.isNull(count) || count < 0) {
             log.warn("Assignments not exist");
             throw new AssignmentsNotExistRuntimeException("Assignments not exist");
         }
+        Assignment assignment = assignments.get(count - 1);
+        assignment.setCanceled(CANCELED);
+        AssignmentEntity assignmentEntity = assignmentMapper.assignmentToAssignmentEntity(assignment);
+        assignmentRepository.save(assignmentEntity);
+        Route route = assignment.getRoute();
+        RouteEntity routeEntity = routeMapper.routeToRouteEntity(route);
+        routeRepository.save(routeEntity);
     }
 
     @Override
     public void cancelRouteAssignments(Route route) {
-        if (route != null) {
-            route.setStatus(1);
-            routeRepository.save(routeMapper.checkToCheckEntity(route));
-        } else {
+        if (Objects.isNull(route)) {
             log.warn("Route not exist");
             throw new RouteNotExistRuntimeException("Route not exist");
         }
+        route.setStatus(CANCELED);
+        RouteEntity routeEntity = routeMapper.routeToRouteEntity(route);
+        routeRepository.save(routeEntity);
     }
 }

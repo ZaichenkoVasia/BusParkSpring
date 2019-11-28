@@ -12,27 +12,25 @@ import java.util.Objects;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RouteMapper {
 
-    public Route checkEntityToCheck(RouteEntity routeEntity) {
-        if (Objects.isNull(routeEntity)) {
-            return null;
-        }
+    public Route routeEntityToRoute(RouteEntity routeEntity) {
 
-        return Route.builder()
-                .id(routeEntity.getId())
-                .registerTime(routeEntity.getRegisterTime())
-                .status(routeEntity.getStatus())
-                .build();
+        return Objects.isNull(routeEntity) ?
+                null :
+                Route.builder()
+                        .id(routeEntity.getId())
+                        .registerTime(routeEntity.getRegisterTime())
+                        .status(routeEntity.getStatus())
+                        .build();
     }
 
-    public RouteEntity checkToCheckEntity(Route route) {
-        if (Objects.isNull(route)) {
-            return null;
-        }
+    public RouteEntity routeToRouteEntity(Route route) {
 
-        return RouteEntity.builder()
-                .id(route.getId())
-                .registerTime(route.getRegisterTime())
-                .status(route.getStatus())
-                .build();
+        return Objects.isNull(route) ?
+                null :
+                RouteEntity.builder()
+                        .id(route.getId())
+                        .registerTime(route.getRegisterTime())
+                        .status(route.getStatus())
+                        .build();
     }
 }

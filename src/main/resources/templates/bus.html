@@ -7,15 +7,9 @@
 <body>
 	<div th:include="header"></div>
 	<div><p class="h3" th:text="#{title} + '. ' + #{bus.title}"></p></div>
-	<div th:if="${session.user != null and session.user.userType.type == 'bus_spec'}">
+	<div th:if="${session.user != null and (session.user.userType.type == 'driver' or session.user.userType.type == 'admin')}">
 		<div th:if="${addedBus != null}">
       		<p class="h4" th:text="#{menu.bus} + ' ' + ${addedBus} + ' ' + #{route.success}">
-   		</div>
-		<div th:if="${existsCode != null}">
-      		<p class="h4" th:text="#{route.code} + ' ' + ${existsCode} + ' ' + #{bus.exists}" >
-   		</div>
-		<div th:if="${existsBus != null}">
-      		<p class="h4" th:text="#{route.busname} + ' ' + ${existsBus} + ' ' + #{bus.exists}">
    		</div>
 
    		<div th:if="${editCode == null}">

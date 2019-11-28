@@ -1,6 +1,7 @@
 package com.spring.model.exception;
 
 public class AssignmentsNotExistRuntimeException extends RuntimeException {
+
     public AssignmentsNotExistRuntimeException() {
     }
 

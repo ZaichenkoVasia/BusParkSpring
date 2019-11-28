@@ -7,20 +7,13 @@
 <body>
 	<div th:include="header"></div>
     <div><p class="h3" th:text="#{title} + '. ' + #{route.title}"></p></div>
-    <div th:if="${session.user != null and (session.user.userType.type == 'cashier' or session.user.userType.type == 'senior_cashier')}">
+    <div th:if="${session.user != null and (session.user.userType.type == 'admin')}">
     	<p th:if="${addedRoute != null and addedRoute}"class="h4" th:text="#{route.route} + ' ' + #{route.success}">
     	<p th:if="${addedRoute != null and not addedRoute}" class="h4" th:text="#{route.error}">
 		<p th:if="${wronginput != null}" class="h4" th:text="#{route.wronginput} + '!'">
 		<p th:if="${busCodeNotFound != null}" class="h4" th:text="#{route.code} + ' ' + ${busCodeNotFound} + ' ' + #{route.codenotfound}+ '!'">
 		<p th:if="${busNameNotFound != null}" class="h4" th:text="#{route.busname} + ' ' + ${busNameNotFound} + ' ' + #{route.namenotfound}+ '!'">
     	<FORM method="POST">
-    		<div class="form-group row">
-    			
-			    <label class="col-sm-2 col-form-label" th:text="#{route.busname}"></label>
-			    <div class="col-sm-10">
-			      <input id="id_name" name="name" type="text" size="45" autocomplete="on">
-			    </div>
-			</div>
     		<div class="form-group row">
 			    <label class="col-sm-2 col-form-label" th:text="#{route.code}"></label>
 			    <div class="col-sm-10">

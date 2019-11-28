@@ -10,8 +10,4 @@ import java.util.Optional;
 public interface BusRepository extends JpaRepository<BusEntity, Long> {
 
     Optional<BusEntity> findByCode(int code);
-
-    Optional<BusEntity> findByModel(String name);
-
-    long count();
 }
