@@ -8,11 +8,7 @@ public interface BusService {
 
     Bus findByModel(String model);
 
-    Bus findById(Long id);
-
-    Page<Bus> view(int currentPage, int pageSize);
-
-    void save(Bus bus);
+    Page<Bus> showPagenationList(int currentPage, int pageSize);
 
     Long addBus(Integer code, String model, Double mileage, Double consumption, String status, String comments);
 

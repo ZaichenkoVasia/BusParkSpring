@@ -70,7 +70,7 @@ public class BusController {
     private void addPagination(Model model, Optional<Integer> page, Optional<Integer> size) {
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(10);
-        Page<Bus> buses = busService.view(currentPage, pageSize);
+        Page<Bus> buses = busService.showPagenationList(currentPage, pageSize);
         model.addAttribute("bus", buses);
         model.addAttribute("currentPage", currentPage);
         int totalPages = buses.getTotalPages();

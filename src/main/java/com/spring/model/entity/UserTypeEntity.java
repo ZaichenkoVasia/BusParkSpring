@@ -4,19 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Data
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
 @Table(name = "user_types")
 public class UserTypeEntity {
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

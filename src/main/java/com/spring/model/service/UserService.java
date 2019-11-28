@@ -8,11 +8,5 @@ import java.util.List;
 public interface UserService {
     User findByLoginAndPassword(String login, String password);
 
-    List<User> findByUserType(UserType userType);
-
-    User findById(Long id);
-
-    User save(User user, UserType userType);
-
     User registration(User user);
 }

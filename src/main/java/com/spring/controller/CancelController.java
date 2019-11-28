@@ -30,8 +30,8 @@ public class CancelController {
     }
 
     @PostMapping(value = "/cancel", params = "btnSearchRoute")
-    public String searchCheck(Model model, HttpSession session,
-                              @RequestParam("routeId") Long routeId) {
+    public String searchAssignments(HttpSession session,
+                                    @RequestParam("routeId") Long routeId) {
         Route route = routeService.findById(routeId);
         List<Assignment> assignments = routeService.findAssignmentsByRoute(routeId);
         if (Objects.nonNull(route)) {
@@ -48,8 +48,8 @@ public class CancelController {
     @GetMapping("/cancel/edit/{count}")
     public ModelAndView cancelAssignment(HttpSession session, @PathVariable Integer count) {
         @SuppressWarnings("unchecked")
-        Collection<Assignment> assignments = (Collection<Assignment>) session.getAttribute("assignments");
-        routeService.cancelRouteAssignments((List<Assignment>) assignments, count);
+        List<Assignment> assignments = (List<Assignment>) session.getAttribute("assignments");
+        routeService.cancelRouteAssignments(assignments, count);
         return new ModelAndView("redirect:/cancel");
     }
 

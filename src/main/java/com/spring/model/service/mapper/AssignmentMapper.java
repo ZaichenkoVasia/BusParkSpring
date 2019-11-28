@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AssignmentMapper {
@@ -17,7 +19,7 @@ public class AssignmentMapper {
     private BusMapper busMapper;
 
     public Assignment assignmentEntityToAssignment(AssignmentEntity assignmentEntity) {
-        if (assignmentEntity == null) {
+        if (Objects.isNull(assignmentEntity)) {
             return null;
         }
 
@@ -35,7 +37,7 @@ public class AssignmentMapper {
     }
 
     public AssignmentEntity assignmentToAssignmentEntity(Assignment assignment) {
-        if (assignment == null) {
+        if (Objects.isNull(assignment)) {
             return null;
         }
 

@@ -42,7 +42,6 @@ public class RouteServiceImpl implements RouteService {
         } else {
             existsBus = busService.findByModel(name);
         }
-
         Assignment assignment = new Assignment();
         assignment.setBus(existsBus);
         assignment.setTax(tax);
@@ -67,7 +66,7 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public Route findById(Long routeId) {
         return routeMapper.checkEntityToCheck(routeRepository.findById(routeId)
-                .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find route by this id")));
+                .orElse(null));
     }
 
     @Override
@@ -93,7 +92,7 @@ public class RouteServiceImpl implements RouteService {
             Route route = assignment.getRoute();
             routeRepository.save(routeMapper.checkToCheckEntity(route));
         } else {
-            log.info("Assignments not exist");
+            log.warn("Assignments not exist");
             throw new AssignmentsNotExistRuntimeException("Assignments not exist");
         }
     }
@@ -104,7 +103,7 @@ public class RouteServiceImpl implements RouteService {
             route.setStatus(1);
             routeRepository.save(routeMapper.checkToCheckEntity(route));
         } else {
-            log.info("Route not exist");
+            log.warn("Route not exist");
             throw new RouteNotExistRuntimeException("Route not exist");
         }
     }

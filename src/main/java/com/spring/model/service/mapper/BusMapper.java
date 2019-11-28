@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 
@@ -13,7 +15,7 @@ public class BusMapper {
 
     public Bus busEntityToBus(BusEntity busEntity) {
 
-        if (busEntity == null) {
+        if (Objects.isNull(busEntity)) {
             return null;
         }
 
@@ -29,7 +31,7 @@ public class BusMapper {
     }
 
     public BusEntity busToBusEntity(Bus bus) {
-        if (bus == null) {
+        if (Objects.isNull(bus)) {
             return null;
         }
 

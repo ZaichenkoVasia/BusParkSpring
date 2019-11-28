@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 
 public class UserTypeMapper {
-
     public UserType userTypeEntityToUserType(UserTypeEntity userTypeEntity) {
-        if (userTypeEntity == null) {
+        if (Objects.isNull(userTypeEntity)) {
             return null;
         }
 
@@ -24,7 +25,7 @@ public class UserTypeMapper {
     }
 
     public UserTypeEntity userTypeToUserTypeEntity(UserType userType) {
-        if (userType == null) {
+        if (Objects.isNull(userType)) {
             return null;
         }
 

@@ -40,13 +40,7 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public Bus findById(Long id) {
-        return busMapper.busEntityToBus(busRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find bus by this id")));
-    }
-
-    @Override
-    public Page<Bus> view(int currentPage, int pageSize) {
+    public Page<Bus> showPagenationList(int currentPage, int pageSize) {
         PageRequest sortedByCode = PageRequest.of(currentPage - 1, pageSize, Sort.by("code"));
         Page<BusEntity> allBusesEntity = busRepository.findAll(sortedByCode);
         List<Bus> result = allBusesEntity
@@ -58,11 +52,6 @@ public class BusServiceImpl implements BusService {
 
     private long countAllBuses() {
         return busRepository.count();
-    }
-
-    @Override
-    public void save(Bus bus) {
-        busRepository.save(busMapper.busToBusEntity(bus));
     }
 
     @Override
