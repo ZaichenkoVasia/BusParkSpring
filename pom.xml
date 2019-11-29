@@ -8,11 +8,11 @@
 		<version>2.2.1.RELEASE</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.spring</groupId>
+	<groupId>com.transportpark</groupId>
 	<artifactId>buspark</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>buspark</name>
-	<description>Project</description>
+	<description>Bus park service</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -54,6 +54,10 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 	</dependencies>
