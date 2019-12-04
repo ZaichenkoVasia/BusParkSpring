@@ -1,126 +1,253 @@
-//package com.transportpark.model.service.impl;
-//
-//import com.transportpark.model.domain.Route;
-//import com.transportpark.model.entity.RouteEntity;
-//import com.transportpark.model.repositories.RouteRepository;
-//import com.transportpark.model.service.mapper.RouteMapper;
-//import org.junit.After;
-//import org.junit.Rule;
-//import org.junit.Test;
-//import org.junit.rules.ExpectedException;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.test.context.ContextConfiguration;
-//import org.springframework.test.context.junit4.SpringRunner;
-//
-//import java.util.Collections;
-//import java.util.List;
-//import java.util.Optional;
-//
-//import static org.hamcrest.CoreMatchers.equalTo;
-//import static org.junit.Assert.assertThat;
-//import static org.mockito.ArgumentMatchers.anyLong;
-//import static org.mockito.Mockito.*;
-//
-//
-//@RunWith(SpringRunner.class)
-//@ContextConfiguration(classes = {RouteServiceImpl.class})
-//public class RouteServiceImplTest {
-//
-//    private static final Route ROUTE = getRoute();
-//
-//    private static final RouteEntity ENTITY = new RouteEntity();
-//
-//    private static final List<RouteEntity> ROUTE_ENTITIES = Collections.singletonList(ENTITY);
-//
-//    private static final List<Route> ROUTES = Collections.singletonList(ROUTE);
-//
-//    @Rule
-//    public final ExpectedException exception = ExpectedException.none();
-//
-//    @MockBean
-//    private RouteRepository repository;
-//
-//    @MockBean
-//    private RouteMapper mapper;
-//
-//    @Autowired
-//    private RouteServiceImpl service;
-//
-//    @After
-//    public void resetMock() {
-//        reset(repository, mapper);
-//    }
-//
-//    @Test
-//    public void shouldReturnRouteById() {
-//        when(repository.findById(anyLong())).thenReturn(Optional.of(ENTITY));
-//        when(mapper.routeEntityToRoute(any(RouteEntity.class))).thenReturn(ROUTE);
-//        Route actual = service.findById(1L);
-//
-//        verify(repository).findById(anyLong());
-//        verify(mapper).routeEntityToRoute(any(RouteEntity.class));
-//
-//        assertThat(actual, equalTo(ROUTE));
-//    }
-//
-////    @Test
-////    public void shouldThrowInvalidDataRuntimeExceptionExceptionWithEmptyBusInAddBus() {
-////        exception.expect(InvalidDataRuntimeException.class);
-////        exception.expectMessage("Invalid input bus data");
-////        service.addBus(null);
-////    }
-//
-////    @Test
-////    public void shouldSaveBus() {
-////        when(repository.findByCode(anyInt())).thenReturn(Optional.empty());
-////        when(mapper.busEntityToBus(any(BusEntity.class))).thenReturn(ROUTE);
-////
-////        Bus actual = Bus.builder().id(1L).code(1).mileage(100).consumption(10).build();
-////        service.addBus(actual);
-////
-////        verify(repository).save(any());
-////    }
-////
-////    @Test
-////    public void shouldThrowInvalidDataRuntimeExceptionExceptionWithEmptyBusInChangeBus() {
-////        when(repository.findByCode(anyInt())).thenReturn(Optional.of(ENTITY));
-////        when(mapper.busEntityToBus(any(BusEntity.class))).thenReturn(ROUTE);
-////        exception.expect(InvalidDataRuntimeException.class);
-////        exception.expectMessage("Invalid input bus data");
-////        service.changeBus(1, null, null);
-////    }
-////
-////    @Test
-////    public void shouldChangeBus() {
-////        when(repository.findByCode(anyInt())).thenReturn(Optional.of(ENTITY));
-////        when(mapper.busEntityToBus(any(BusEntity.class))).thenReturn(ROUTE);
-////
-////        Bus actual = Bus.builder().id(1L).code(1).mileage(500).consumption(50).build();
-////        actual.setConsumption(10);
-////        actual.setMileage(100);
-////        service.changeBus(1, 100.0, 10.0);
-////        assertThat(actual, equalTo(ROUTE));
-////        verify(repository).save(any());
-////    }
-////
-////    @Test
-////    public void shouldReturnPagenationBus() {
-////        PageRequest sortedByCode = PageRequest.of(0, 1, Sort.by("code"));
-////        when(repository.findAll(any(PageRequest.class))).thenReturn(new PageImpl<>(ROUTE_ENTITIES, sortedByCode, 1));
-////        when(mapper.busEntityToBus(any(BusEntity.class))).thenReturn(ROUTE);
-////
-////        Page<Bus> pageBus = service.showPageList(1, 1);
-////
-////        Page<Bus> actualPageBus = new PageImpl<Bus>(ROUTES, sortedByCode, 1);
-////        assertThat(pageBus, equalTo(actualPageBus));
-////    }
-//
-//    private static Route getRoute() {
-//        return Route.builder()
-//                .id(1L)
-//                .status(0)
-//                .build();
-//    }
-//}
+package com.transportpark.model.service.impl;
+
+import com.transportpark.model.domain.Assignment;
+import com.transportpark.model.domain.Bus;
+import com.transportpark.model.domain.Route;
+import com.transportpark.model.entity.AssignmentEntity;
+import com.transportpark.model.entity.BusEntity;
+import com.transportpark.model.entity.RouteEntity;
+import com.transportpark.model.exception.AssignmentsNotExistRuntimeException;
+import com.transportpark.model.exception.EntityNotFoundRuntimeException;
+import com.transportpark.model.exception.InvalidDataRuntimeException;
+import com.transportpark.model.exception.RouteNotExistRuntimeException;
+import com.transportpark.model.repositories.AssignmentRepository;
+import com.transportpark.model.repositories.RouteRepository;
+import com.transportpark.model.service.BusService;
+import com.transportpark.model.service.RouteService;
+import com.transportpark.model.service.mapper.AssignmentMapper;
+import com.transportpark.model.service.mapper.RouteMapper;
+import org.junit.After;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {RouteServiceImpl.class})
+public class RouteServiceImplTest {
+
+    private static final Bus BUS = getBus();
+
+    private static final BusEntity BUS_ENTITY = getBusEntity();
+
+    private static final Route ROUTE = getRoute();
+
+    private static final RouteEntity ROUTE_ENTITY = getRouteEntity();
+
+    private static final AssignmentEntity ASSIGNMENT_ENTITY = getAssignmentEntity();
+
+    private static final Assignment ASSIGNMENT = getAssignment();
+
+    private static final List<Assignment> ASSIGNMENTS = Collections.singletonList(ASSIGNMENT);
+
+    private static final List<AssignmentEntity> ASSIGNMENT_ENTITIES = Collections.singletonList(ASSIGNMENT_ENTITY);
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
+    @MockBean
+    private RouteRepository routeRepository;
+
+    @MockBean
+    private AssignmentRepository assignmentRepository;
+
+    @MockBean
+    private BusService busService;
+
+    @MockBean
+    private RouteMapper routeMapper;
+
+    @MockBean
+    private AssignmentMapper assignmentMapper;
+
+    @Autowired
+    private RouteService service;
+
+    @After
+    public void resetMock() {
+        reset(routeRepository, assignmentRepository, busService, routeMapper, assignmentMapper);
+    }
+
+    @Test
+    public void shouldAddAssignments() {
+        when(busService.findByCode(anyInt())).thenReturn(BUS);
+
+        Assignment assignment = service.addAssignment(ASSIGNMENT);
+        assertThat(assignment, is(ASSIGNMENT));
+    }
+
+    @Test
+    public void shouldThrowInvalidDataRuntimeExceptionWithIncorrectAssignment() {
+        exception.expect(InvalidDataRuntimeException.class);
+
+        service.addAssignment(null);
+    }
+
+    @Test
+    public void shouldAddRoute() {
+        when(routeMapper.routeEntityToRoute(any(RouteEntity.class))).thenReturn(ROUTE);
+        when(routeMapper.routeToRouteEntity(any(Route.class))).thenReturn(ROUTE_ENTITY);
+        when(assignmentMapper.assignmentToAssignmentEntity(any(Assignment.class))).thenReturn(ASSIGNMENT_ENTITY);
+        when(routeRepository.save(any(RouteEntity.class))).thenReturn(ROUTE_ENTITY);
+
+        service.addRoute(ASSIGNMENTS);
+
+        verify(assignmentRepository).save(any(AssignmentEntity.class));
+    }
+
+    @Test
+    public void shouldThrowEntityNotFoundRuntimeExceptionWithInvalidRouteIdInFindAllAssignments() {
+        exception.expect(EntityNotFoundRuntimeException.class);
+        when(routeRepository.findById(anyLong())).thenThrow(new EntityNotFoundRuntimeException());
+        service.findAssignmentsByRoute(-1L);
+    }
+
+    @Test
+    public void shouldFindAllAssignmentsByRouteId() {
+        when(routeRepository.findById(anyLong())).thenReturn(Optional.ofNullable(ROUTE_ENTITY));
+        when(routeMapper.routeEntityToRoute(any(RouteEntity.class))).thenReturn(ROUTE);
+        when(routeMapper.routeToRouteEntity(any(Route.class))).thenReturn(ROUTE_ENTITY);
+        when(assignmentRepository.findAllByRoute(any(RouteEntity.class))).thenReturn(ASSIGNMENT_ENTITIES);
+        when(assignmentMapper.assignmentEntityToAssignment(any(AssignmentEntity.class))).thenReturn(ASSIGNMENT);
+
+        List<Assignment> assignments = service.findAssignmentsByRoute(ROUTE.getId());
+
+        assertThat(assignments, is(ASSIGNMENTS));
+    }
+
+    @Test
+    public void shouldReturnRoute() {
+        when(routeRepository.findById(anyLong())).thenReturn(Optional.of(ROUTE_ENTITY));
+        when(routeMapper.routeEntityToRoute(any(RouteEntity.class))).thenReturn(ROUTE);
+
+        Route route = service.findById(1L);
+
+        assertThat(route, is(ROUTE));
+    }
+
+    @Test
+    public void shouldDontFindRoute() {
+        when(routeRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(routeMapper.routeEntityToRoute(any(RouteEntity.class))).thenReturn(ROUTE);
+
+        Route route = service.findById(-1L);
+
+        assertThat(route, nullValue());
+    }
+
+    @Test
+    public void shouldThrowAssignmentsNotExistRuntimeExceptionWithNullCancelRouteAssignments() {
+        exception.expect(AssignmentsNotExistRuntimeException.class);
+
+        service.cancelRouteAssignments(null, 1);
+    }
+
+    @Test
+    public void shouldThrowAssignmentsNotExistRuntimeExceptionWithIncorrectCountCancelRouteAssignments() {
+        exception.expect(AssignmentsNotExistRuntimeException.class);
+
+        service.cancelRouteAssignments(ASSIGNMENTS, -1);
+    }
+
+    @Test
+    public void shouldCancelRouteAssignmentsByAssignments() {
+        when(assignmentMapper.assignmentToAssignmentEntity(any(Assignment.class))).thenReturn(ASSIGNMENT_ENTITY);
+        when(routeMapper.routeToRouteEntity(any(Route.class))).thenReturn(ROUTE_ENTITY);
+
+        service.cancelRouteAssignments(ASSIGNMENTS, 1);
+
+        verify(assignmentRepository).save(any(AssignmentEntity.class));
+        verify(routeRepository).save(any(RouteEntity.class));
+    }
+
+    @Test
+    public void shouldThrowRouteNotExistRuntimeExceptionWithIncorrectRoute() {
+        exception.expect(RouteNotExistRuntimeException.class);
+
+        service.cancelRouteAssignments(null);
+    }
+
+    @Test
+    public void shouldCancelRouteAssignmentsByRoute() {
+        when(routeMapper.routeToRouteEntity(any(Route.class))).thenReturn(ROUTE_ENTITY);
+
+        service.cancelRouteAssignments(ROUTE);
+
+        verify(routeRepository).save(any(RouteEntity.class));
+    }
+
+    private static RouteEntity getRouteEntity() {
+        RouteEntity routeEntity = new RouteEntity();
+        routeEntity.setId(1L);
+        routeEntity.setStatus(0);
+        return routeEntity;
+    }
+
+    private static Route getRoute() {
+        Route route = new Route();
+        route.setId(1L);
+        route.setStatus(0);
+        return route;
+    }
+
+    private static AssignmentEntity getAssignmentEntity() {
+        AssignmentEntity assignmentEntity = new AssignmentEntity();
+        assignmentEntity.setId(1L);
+        assignmentEntity.setBus(BUS_ENTITY);
+        assignmentEntity.setCanceled(0);
+        assignmentEntity.setJourney(10);
+        assignmentEntity.setRoute(ROUTE_ENTITY);
+        assignmentEntity.setTax(100);
+        assignmentEntity.setCanceled(0);
+        return assignmentEntity;
+    }
+
+    private static Assignment getAssignment() {
+        Assignment assignment = new Assignment();
+        assignment.setId(1L);
+        assignment.setBus(BUS);
+        assignment.setCanceled(0);
+        assignment.setJourney(10);
+        assignment.setRoute(ROUTE);
+        assignment.setTax(100);
+        assignment.setCanceled(0);
+        return assignment;
+    }
+
+    private static Bus getBus() {
+        Bus bus = new Bus();
+        bus.setId(1L);
+        bus.setCode(1);
+        bus.setStatus("status");
+        bus.setModel("model");
+        bus.setMileage(10);
+        bus.setConsumption(100);
+        bus.setComments("comments");
+        return bus;
+    }
+
+    private static BusEntity getBusEntity() {
+        BusEntity busEntity = new BusEntity();
+        busEntity.setId(1L);
+        busEntity.setCode(1);
+        busEntity.setStatus("status");
+        busEntity.setModel("model");
+        busEntity.setMileage(10);
+        busEntity.setConsumption(100);
+        busEntity.setComments("comments");
+        return busEntity;
+    }
+}

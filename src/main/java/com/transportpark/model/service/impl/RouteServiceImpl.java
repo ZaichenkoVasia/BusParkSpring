@@ -86,7 +86,7 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public void cancelRouteAssignments(List<Assignment> assignments, Integer count) {
-        if (assignments.isEmpty() || Objects.isNull(count) || count < 0) {
+        if (Objects.isNull(assignments) || assignments.isEmpty() || Objects.isNull(count) || count < 0) {
             log.warn("Assignments not exist");
             throw new AssignmentsNotExistRuntimeException("Assignments not exist");
         }
