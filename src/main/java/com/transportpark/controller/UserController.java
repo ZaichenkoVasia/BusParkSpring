@@ -16,10 +16,16 @@ import javax.servlet.http.HttpSession;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
-    @GetMapping("/")
+    @RequestMapping("/")
     public String getSignIn() {
         return "/index";
     }
+
+    @RequestMapping(value = "/login")
+    public String login() {
+        return "/index";
+    }
+
 
     @GetMapping("/logout")
     public ModelAndView logout(HttpServletRequest request) {
@@ -28,10 +34,5 @@ public class UserController {
             session.invalidate();
         }
         return new ModelAndView("redirect:/");
-    }
-
-    @RequestMapping("/")
-    public String postSignIn() {
-        return "/index";
     }
 }

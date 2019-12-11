@@ -2,18 +2,36 @@ package com.transportpark.model.service.mapper;
 
 import com.transportpark.model.domain.Bus;
 import com.transportpark.model.entity.BusEntity;
+import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.reset;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {BusMapper.class})
 public class BusMapperTest {
     private static final BusEntity BUS_ENTITY = getBusEntity();
 
     private static final Bus BUS = getBus();
 
-    private final BusMapper busMapper = new BusMapper();
+    @MockBean
+    private UserMapper userMapper;
+
+    @Autowired
+    private BusMapper busMapper;
+
+    @After
+    public void resetMock() {
+        reset(userMapper);
+    }
 
     @Test
     public void shouldMapGoodEntityToGood() {
@@ -56,8 +74,15 @@ public class BusMapperTest {
     }
 
     private static BusEntity getBusEntity() {
-        return new BusEntity(1L, 1, "model", 100, 10,
-                "status", "comments", null);
+        return BusEntity.builder()
+                .id(1L)
+                .code(1)
+                .model("model")
+                .mileage(100)
+                .consumption(10)
+                .status("status")
+                .comments("comments")
+                .build();
     }
 
     private static Bus getBus() {

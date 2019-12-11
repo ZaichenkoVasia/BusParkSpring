@@ -82,8 +82,13 @@ public class UserMapperTest {
     }
 
     private static UserEntity getUserEntity() {
-        return new UserEntity(1L, "email@gmail.com", "password",
-                "name", USER_TYPE_ENTITY);
+        return UserEntity.builder()
+                .id(1L)
+                .email("email@gmail.com")
+                .password("password")
+                .name("name")
+                .userType(USER_TYPE_ENTITY)
+                .build();
     }
 
     private static User getUser() {

@@ -46,4 +46,8 @@ public class BusEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bus")
     private List<AssignmentEntity> assignments;
+
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "driver_id")
+    private UserEntity driver;
 }

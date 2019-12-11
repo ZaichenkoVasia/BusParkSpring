@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,14 +22,15 @@ public class BusController {
     private final BusService busService;
 
     @GetMapping("/bus")
-    public String viewBuses(Model model, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+    public String viewBuses(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
         addPagination(model, page, size);
+        model.addAttribute("bus", new Bus());
         return "/bus";
     }
 
     @PostMapping("/bus")
     public String addBus(Model model, @ModelAttribute Bus bus,
-                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+                         @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
         busService.addBus(bus);
         model.addAttribute("addedBus", bus.getModel());
         addPagination(model, page, size);
@@ -36,8 +38,8 @@ public class BusController {
     }
 
     @GetMapping("/bus/edit/{code}")
-    public String editBus(Model model, @PathVariable Integer code, @RequestParam("page") Integer page,
-                          @RequestParam("size") Integer size) {
+    public String editBus(Model model, @PathVariable Integer code, @RequestParam("page") Optional<Integer> page,
+                          @RequestParam("size") Optional<Integer> size) {
         model.addAttribute("editCode", code);
         addPagination(model, page, size);
         return "/bus";
@@ -46,15 +48,18 @@ public class BusController {
     @PostMapping("/bus/edit/{code}")
     public ModelAndView updateBus(Model model, @PathVariable Integer code,
                                   @RequestParam("changeMileage") Double changeMileage, @RequestParam("changeConsumption") Double changeConsumption,
-                                  @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-        busService.changeBus(code, changeMileage, changeConsumption);
+                                  @RequestParam("changeDriver") Long idDriver,
+                                  @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
+        busService.changeBus(code, changeMileage, changeConsumption, idDriver);
         addPagination(model, page, size);
         return new ModelAndView("redirect:/bus");
     }
 
-    private void addPagination(Model model, Integer currentPage, Integer pageSize) {
+    private void addPagination(Model model, Optional<Integer> current, Optional<Integer> size) {
+        int currentPage = current.orElse(1);
+        int pageSize = size.orElse(10);
         Page<Bus> buses = busService.showPageList(currentPage, pageSize);
-        model.addAttribute("bus", buses);
+        model.addAttribute("buses", buses);
         model.addAttribute("currentPage", currentPage);
         int totalPages = buses.getTotalPages();
         if (totalPages > 0) {

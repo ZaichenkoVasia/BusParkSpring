@@ -20,7 +20,7 @@ import java.util.List;
 @Configuration
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        String targetUrl = determineTargetUrl(authentication);
+        String targetUrl = determineTargetUrl(authentication, request);
         if (response.isCommitted()) {
             return;
         }
@@ -29,17 +29,21 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     }
 
-    protected String determineTargetUrl(Authentication authentication) {
+    protected String determineTargetUrl(Authentication authentication, HttpServletRequest request) {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         List<String> roles = new ArrayList<>();
         for (GrantedAuthority a : authorities) {
             roles.add(a.getAuthority());
         }
 
+        request.getSession().setAttribute("role", roles.get(0));
+
         if (roles.contains("admin")) {
-            return "redirect:/route";
+            return "/bus";
         }
-        return "redirect:/bus";
+        return "/driver";
 
     }
+
+
 }

@@ -38,7 +38,6 @@ public class UserMapper {
         }
 
         UserTypeEntity userType = userTypeMapper.userTypeToUserTypeEntity(user.getUserType());
-
         return UserEntity.builder()
                 .id(user.getId())
                 .email(user.getEmail())

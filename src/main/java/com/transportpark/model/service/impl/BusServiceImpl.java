@@ -1,12 +1,16 @@
 package com.transportpark.model.service.impl;
 
 import com.transportpark.model.domain.Bus;
+import com.transportpark.model.domain.User;
 import com.transportpark.model.entity.BusEntity;
+import com.transportpark.model.entity.UserEntity;
 import com.transportpark.model.exception.EntityNotFoundRuntimeException;
 import com.transportpark.model.exception.InvalidDataRuntimeException;
 import com.transportpark.model.repositories.BusRepository;
 import com.transportpark.model.service.BusService;
+import com.transportpark.model.service.UserService;
 import com.transportpark.model.service.mapper.BusMapper;
+import com.transportpark.model.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +30,22 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class BusServiceImpl implements BusService {
 
+    private final UserService userService;
     private final BusRepository busRepository;
     private final BusMapper busMapper;
+    private final UserMapper userMapper;
 
     @Override
     public Bus findByCode(int code) {
         return busMapper.busEntityToBus(busRepository.findByCode(code)
                 .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find bus by this code")));
+    }
+
+    @Override
+    public Bus findByDriver(User driver) {
+        UserEntity userEntity = userMapper.userToUserEntity(driver);
+        return busMapper.busEntityToBus(busRepository.findByDriver(userEntity)
+                .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find bus by this driver")));
     }
 
     @Override
@@ -52,7 +65,7 @@ public class BusServiceImpl implements BusService {
 
     @Override
     public void addBus(Bus bus) {
-        if(Objects.isNull(bus)){
+        if (Objects.isNull(bus)) {
             log.warn("Invalid input bus data");
             throw new InvalidDataRuntimeException("Invalid input bus data");
         }
@@ -61,18 +74,33 @@ public class BusServiceImpl implements BusService {
             log.warn("Bus with this code is exist");
             throw new InvalidDataRuntimeException("Bus with this code is exist");
         }
+        User driver = userService.findById(bus.getDriver().getId());
+        bus.setDriver(driver);
         BusEntity entityBus = busMapper.busToBusEntity(bus);
         busRepository.save(entityBus);
     }
 
     @Override
-    public void changeBus(Integer code, Double newMileage, Double newConsumption) {
-        Bus bus = busMapper.busEntityToBus(busRepository.findByCode(code)
-                .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find bus by this code")));
-        if (Objects.isNull(newMileage) || Objects.isNull(newConsumption)) {
+    public void updateBus(Bus bus) {
+        if (Objects.isNull(bus)) {
             log.warn("Invalid input bus data");
             throw new InvalidDataRuntimeException("Invalid input bus data");
         }
+        BusEntity entityBus = busMapper.busToBusEntity(bus);
+        busRepository.save(entityBus);
+    }
+
+    @Override
+    public void changeBus(Integer code, Double newMileage, Double newConsumption, Long idDriver) {
+        Bus bus = busMapper.busEntityToBus(busRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find bus by this code")));
+        if (Objects.isNull(newMileage) || Objects.isNull(newConsumption)
+                || Objects.isNull(idDriver) || idDriver < 0) {
+            log.warn("Invalid input bus data");
+            throw new InvalidDataRuntimeException("Invalid input bus data");
+        }
+        User user = userService.findById(idDriver);
+        bus.setDriver(user);
         bus.setMileage(newMileage);
         bus.setConsumption(newConsumption);
         BusEntity busEntity = busMapper.busToBusEntity(bus);

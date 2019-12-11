@@ -36,5 +36,7 @@ public class Bus {
 
     private String comments;
 
+    private User driver;
+
     private List<Assignment> assignments;
 }

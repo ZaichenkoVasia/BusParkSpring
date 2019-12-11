@@ -91,7 +91,7 @@ public class UserServiceImplTest {
     @Test
     public void loadUserByUsernameShouldThrowUnCorrectInputDataRuntimeExceptionWithEmptyLogin() {
         exception.expect(EntityNotFoundRuntimeException.class);
-        exception.expectMessage("Don't find user by this email");
+        exception.expectMessage("Login is empty");
 
         service.loadUserByUsername(null);
     }

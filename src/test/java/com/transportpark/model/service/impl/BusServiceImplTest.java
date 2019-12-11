@@ -1,11 +1,14 @@
 package com.transportpark.model.service.impl;
 
 import com.transportpark.model.domain.Bus;
+import com.transportpark.model.domain.User;
 import com.transportpark.model.entity.BusEntity;
 import com.transportpark.model.exception.EntityNotFoundRuntimeException;
 import com.transportpark.model.exception.InvalidDataRuntimeException;
 import com.transportpark.model.repositories.BusRepository;
+import com.transportpark.model.service.UserService;
 import com.transportpark.model.service.mapper.BusMapper;
+import com.transportpark.model.service.mapper.UserMapper;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,6 +39,8 @@ public class BusServiceImplTest {
 
     private static final Bus BUS = getBus();
 
+    private static final User DRIVER = getDriver();
+
     private static final BusEntity ENTITY = new BusEntity();
 
     private static final List<BusEntity> BUS_ENTITIES = Collections.singletonList(ENTITY);
@@ -51,12 +56,18 @@ public class BusServiceImplTest {
     @MockBean
     private BusMapper mapper;
 
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private UserMapper userMapper;
+
     @Autowired
     private BusServiceImpl service;
 
     @After
     public void resetMock() {
-        reset(repository, mapper);
+        reset(repository, mapper, userService, userMapper);
     }
 
     @Test
@@ -90,8 +101,17 @@ public class BusServiceImplTest {
     public void shouldSaveBus() {
         when(repository.findByCode(anyInt())).thenReturn(Optional.empty());
         when(mapper.busEntityToBus(any(BusEntity.class))).thenReturn(BUS);
-
-        Bus actual = Bus.builder().id(1L).code(1).mileage(100).consumption(10).build();
+        when(userService.findById(anyLong())).thenReturn(DRIVER);
+        Bus actual = Bus.builder()
+                .id(1L)
+                .code(1)
+                .mileage(100)
+                .consumption(10)
+                .driver(User
+                        .builder()
+                        .id(1L)
+                        .build())
+                .build();
         service.addBus(actual);
 
         verify(repository).save(any());
@@ -103,7 +123,7 @@ public class BusServiceImplTest {
         when(mapper.busEntityToBus(any(BusEntity.class))).thenReturn(BUS);
         exception.expect(InvalidDataRuntimeException.class);
         exception.expectMessage("Invalid input bus data");
-        service.changeBus(1, null, null);
+        service.changeBus(1, null, null, null);
     }
 
     @Test
@@ -114,7 +134,7 @@ public class BusServiceImplTest {
         Bus actual = Bus.builder().id(1L).code(1).mileage(500).consumption(50).build();
         actual.setConsumption(10);
         actual.setMileage(100);
-        service.changeBus(1, 100.0, 10.0);
+        service.changeBus(1, 100.0, 10.0, 1L);
         assertThat(actual, equalTo(BUS));
         verify(repository).save(any());
     }
@@ -137,6 +157,13 @@ public class BusServiceImplTest {
                 .code(1)
                 .mileage(100)
                 .consumption(10)
+                .build();
+    }
+
+    private static User getDriver() {
+        return User
+                .builder()
+                .id(1L)
                 .build();
     }
 }

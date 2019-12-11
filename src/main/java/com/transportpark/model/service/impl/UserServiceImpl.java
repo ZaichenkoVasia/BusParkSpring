@@ -12,21 +12,21 @@ import com.transportpark.model.service.mapper.UserMapper;
 import com.transportpark.model.service.mapper.UserTypeMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
     private final UserMapper userMapper;
@@ -55,8 +55,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return  userMapper.userEntityToUser(userRepository.findByEmail(email).
-                orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find user by this email")));
+    public User findById(Long id) {
+        return userMapper.userEntityToUser(userRepository.findById(id).
+                orElseThrow(() -> new EntityNotFoundRuntimeException("Don't find user by this id")));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) {
+        if (Objects.isNull(email)) {
+            log.warn("Login is empty");
+            throw new EntityNotFoundRuntimeException("Login is empty");
+        }
+        Optional<UserEntity> byLogin = userRepository.findByEmail(email);
+
+        return byLogin.map(userMapper::userEntityToUser).orElse(null);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        return (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 }

@@ -1,5 +1,6 @@
 package com.transportpark.model.entity;
 
+import com.transportpark.model.domain.Bus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,5 +37,8 @@ public class UserEntity {
     @JoinColumn(name = "id_user_type", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private UserTypeEntity userType;
+
+    @OneToOne(mappedBy = "driver")
+    private BusEntity bus;
 }
 

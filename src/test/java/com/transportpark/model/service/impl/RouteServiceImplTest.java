@@ -9,12 +9,12 @@ import com.transportpark.model.entity.RouteEntity;
 import com.transportpark.model.exception.AssignmentsNotExistRuntimeException;
 import com.transportpark.model.exception.EntityNotFoundRuntimeException;
 import com.transportpark.model.exception.InvalidDataRuntimeException;
-import com.transportpark.model.exception.RouteNotExistRuntimeException;
 import com.transportpark.model.repositories.AssignmentRepository;
 import com.transportpark.model.repositories.RouteRepository;
 import com.transportpark.model.service.BusService;
 import com.transportpark.model.service.RouteService;
 import com.transportpark.model.service.mapper.AssignmentMapper;
+import com.transportpark.model.service.mapper.BusMapper;
 import com.transportpark.model.service.mapper.RouteMapper;
 import org.junit.After;
 import org.junit.Rule;
@@ -71,6 +71,9 @@ public class RouteServiceImplTest {
     private RouteMapper routeMapper;
 
     @MockBean
+    private BusMapper busMapper;
+
+    @MockBean
     private AssignmentMapper assignmentMapper;
 
     @Autowired
@@ -78,7 +81,7 @@ public class RouteServiceImplTest {
 
     @After
     public void resetMock() {
-        reset(routeRepository, assignmentRepository, busService, routeMapper, assignmentMapper);
+        reset(routeRepository, assignmentRepository, busService, routeMapper, assignmentMapper, busMapper);
     }
 
     @Test
@@ -120,12 +123,12 @@ public class RouteServiceImplTest {
         when(routeRepository.findById(anyLong())).thenReturn(Optional.ofNullable(ROUTE_ENTITY));
         when(routeMapper.routeEntityToRoute(any(RouteEntity.class))).thenReturn(ROUTE);
         when(routeMapper.routeToRouteEntity(any(Route.class))).thenReturn(ROUTE_ENTITY);
-        when(assignmentRepository.findAllByRoute(any(RouteEntity.class))).thenReturn(ASSIGNMENT_ENTITIES);
+        when(assignmentRepository.findByRoute(any(RouteEntity.class))).thenReturn(Optional.ofNullable(ASSIGNMENT_ENTITY));
         when(assignmentMapper.assignmentEntityToAssignment(any(AssignmentEntity.class))).thenReturn(ASSIGNMENT);
 
-        List<Assignment> assignments = service.findAssignmentsByRoute(ROUTE.getId());
+        Assignment assignments = service.findAssignmentsByRoute(ROUTE.getId());
 
-        assertThat(assignments, is(ASSIGNMENTS));
+        assertThat(assignments, is(ASSIGNMENT));
     }
 
     @Test
@@ -159,7 +162,7 @@ public class RouteServiceImplTest {
     public void shouldThrowAssignmentsNotExistRuntimeExceptionWithIncorrectCountCancelRouteAssignments() {
         exception.expect(AssignmentsNotExistRuntimeException.class);
 
-        service.cancelRouteAssignments(ASSIGNMENTS, -1);
+        service.cancelRouteAssignments(ASSIGNMENT, -1);
     }
 
     @Test
@@ -167,25 +170,9 @@ public class RouteServiceImplTest {
         when(assignmentMapper.assignmentToAssignmentEntity(any(Assignment.class))).thenReturn(ASSIGNMENT_ENTITY);
         when(routeMapper.routeToRouteEntity(any(Route.class))).thenReturn(ROUTE_ENTITY);
 
-        service.cancelRouteAssignments(ASSIGNMENTS, 1);
+        service.cancelRouteAssignments(ASSIGNMENT, 1);
 
         verify(assignmentRepository).save(any(AssignmentEntity.class));
-        verify(routeRepository).save(any(RouteEntity.class));
-    }
-
-    @Test
-    public void shouldThrowRouteNotExistRuntimeExceptionWithIncorrectRoute() {
-        exception.expect(RouteNotExistRuntimeException.class);
-
-        service.cancelRouteAssignments(null);
-    }
-
-    @Test
-    public void shouldCancelRouteAssignmentsByRoute() {
-        when(routeMapper.routeToRouteEntity(any(Route.class))).thenReturn(ROUTE_ENTITY);
-
-        service.cancelRouteAssignments(ROUTE);
-
         verify(routeRepository).save(any(RouteEntity.class));
     }
 

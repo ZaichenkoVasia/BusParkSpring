@@ -88,8 +88,15 @@ public class AssignmentMapperTest {
     }
 
     private static BusEntity getBusEntity() {
-        return new BusEntity(1L, 1, "model", 100, 10,
-                "status", "comments", null);
+        return BusEntity.builder()
+                .id(1L)
+                .code(1)
+                .model("model")
+                .mileage(100)
+                .consumption(10)
+                .status("status")
+                .comments("comments")
+                .build();
     }
 
     private static Bus getBus() {
