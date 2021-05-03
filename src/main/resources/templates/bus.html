@@ -8,8 +8,10 @@
 <div th:include="header"></div>
 <div><p class="h3" th:text="#{title} + '. ' + #{bus.title}"></p></div>
 <div>
-    <div th:if="${addedBus != null}">
-        <p class="h4" th:text="#{menu.bus} + ' ' + ${addedBus} + ' ' + #{route.success}">
+    <div th:switch="${identify}">
+        <p class="h4" th:case="'true'" th:text="#{menu.bus} + ' ' + ${addedBus} + ' ' + #{route.success}"></p>
+        <p class="h4" th:case="'false'" th:text="#{identification.robot}"></p>
+        <p class="h4" th:case="*"></p>
     </div>
 
     <div th:if="${editCode == null}">
